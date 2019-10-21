@@ -35,7 +35,7 @@ io.on('connection', (socket) => {
         io.emit('message', generateMessage('User has left'))
     })
     socket.on('sendLocation', (data, callback) => {
-        socket.broadcast.emit('locationMessage', generateLocationMessage(`https://google.com/maps?q=${data.latitude},${data.longitude}`));
+        io.emit('locationMessage', generateLocationMessage(`https://google.com/maps?q=${data.latitude},${data.longitude}`));
         callback();
     })
 
