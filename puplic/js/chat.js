@@ -9,12 +9,22 @@ const $messages = document.querySelector('#messages');
 //Templates
 const messageTemplate = document.querySelector('#message-template').innerHTML;
 const lcoationTemplate = document.querySelector('#location-template').innerHTML;
+
+//Options
+const { username, room  } = Qs.parse(location.search, {ignoreQueryPrefix: true})
+
 socket.on('message', message => {
     const html = Mustache.render(messageTemplate,{
         message: message.text,
         createdAt: moment(message.createdAt).format('H:mm')
     });
     $messages.insertAdjacentHTML('beforeend', html)
+    if(message.text === 'Welcome!'){
+        notifyMe('Connected')
+    }
+    if(document.hidden){
+            notifyMe('New message')
+    }
 })
 socket.on('locationMessage', message => {
     const html = Mustache.render(lcoationTemplate,{
@@ -58,7 +68,24 @@ geolocationButton.addEventListener('click', () => {
 
             })
         })
-c 
-    
-      
 })
+
+socket.emit('join', {username, room})
+
+
+function notifyMe(text) {
+    if (!("Notification" in window)) return
+  
+    if (Notification.permission === "granted") {
+      var notification = new Notification(text);
+    }
+  
+    else if (Notification.permission !== "denied") {
+      Notification.requestPermission().then(function (permission) {
+        if (permission === "granted") {
+          var notification = new Notification(text);
+        }
+      });
+    }
+  
+  }
